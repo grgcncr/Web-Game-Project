@@ -3,14 +3,15 @@ import GameScene from './scenes/GameScene';
 
 const config = {
     type: Phaser.AUTO,
-    width: 300,
-    height: 200,
+    width: 200,
+    height: 100,
     pixelArt: true,
+    backgroundColor: '#3dbb6d',
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 900 },
-            debug: true
+            gravity: { y: 500 },
+            // debug: true
         }
     },
     scale: {

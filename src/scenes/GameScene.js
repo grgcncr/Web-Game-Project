@@ -7,11 +7,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('player', 'assets/knightr1.png');
-        this.load.image('walkright1', 'assets/knightr1.png');
-        this.load.image('walkright2', 'assets/knightr2.png');
-        this.load.image('walkleft1', 'assets/knightl1.png');
-        this.load.image('walkleft2', 'assets/knightl2.png');
+        this.load.image('player', 'assets/knight.png');
+        this.load.image('walkright1', 'assets/knight.png');
+        this.load.image('walkright2', 'assets/knight2.png');
+        this.load.image('walkleft1', 'assets/knight3.png');
+        this.load.image('walkleft2', 'assets/knight4.png');
         this.load.tilemapTiledJSON(
             'ground',
             'assets/tileset1/tileset1.tilemap.json'
@@ -30,8 +30,8 @@ export default class GameScene extends Phaser.Scene {
         // this.cameras.main.startFollow(this.player);
         this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
         this.cameras.main.setDeadzone(50, 100);
-        this.player.body.setSize(16, 27);
-        this.player.body.setOffset(4, 5);
+        this.player.body.setSize(10, 16);
+        this.player.body.setOffset(3, 0);
         this.anims.create({
             key: 'walkright',
             frames: [
@@ -57,7 +57,7 @@ export default class GameScene extends Phaser.Scene {
             'terrain'
         );
         this.textures.get('terrain').setFilter(Phaser.Textures.NEAREST);
-        const groundLayer = ground.createLayer('Layer 1',tileset,0,180);
+        const groundLayer = ground.createLayer('Layer 1',tileset,0,155);
         groundLayer.setCollisionByExclusion([-1]);
         this.physics.add.collider(this.player, groundLayer);
         
@@ -100,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
         }
         else {
             this.player.setVelocityX(0);
-            this.player.anims.play('walk', true);
+            this.player.anims.stop();
         }
         
         // if (this.cursors.left.isDown) {
@@ -120,7 +120,7 @@ export default class GameScene extends Phaser.Scene {
             this.cursors.up.isDown &&
             this.player.body.blocked.down
         ) {
-            this.player.setVelocityY(-300);
+            this.player.setVelocityY(-150);
             }
         
     }
