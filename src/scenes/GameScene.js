@@ -25,8 +25,13 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         this.player = this.physics.add.sprite(150, 120, 'player');
-        this.player.setCollideWorldBounds(true);
+        // this.player.setCollideWorldBounds(true);
         this.player.setScale(1);
+        // this.cameras.main.startFollow(this.player);
+        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+        this.cameras.main.setDeadzone(50, 100);
+        this.player.body.setSize(16, 27);
+        this.player.body.setOffset(4, 5);
         this.anims.create({
             key: 'walkright',
             frames: [
@@ -54,34 +59,68 @@ export default class GameScene extends Phaser.Scene {
         this.textures.get('terrain').setFilter(Phaser.Textures.NEAREST);
         const groundLayer = ground.createLayer('Layer 1',tileset,0,180);
         groundLayer.setCollisionByExclusion([-1]);
-        // this.physics.add.existing(ground, true);
         this.physics.add.collider(this.player, groundLayer);
         
         this.cursors = this.input.keyboard.createCursorKeys();
+        
+        
+        this.lastDirection = 'right';
 
         
     }
 
 
     update() {
-        if (this.cursors.left.isDown) {
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
+            this.lastDirection = 'left';
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
+            this.lastDirection = 'right';
+        }
+
+        if (this.cursors.left.isDown && this.cursors.right.isDown) {
+
+            if (this.lastDirection === 'left') {
+                this.player.setVelocityX(-100);
+                this.player.anims.play('walkleft', true);
+            } else {
+                this.player.setVelocityX(100);
+                this.player.anims.play('walkright', true);
+            }
+        
+        }
+        else if (this.cursors.left.isDown) {
             this.player.setVelocityX(-100);
-            this.player.anims.play('walkleft',true)
+            this.player.anims.play('walkleft', true);
         }
         else if (this.cursors.right.isDown) {
             this.player.setVelocityX(100);
-            this.player.anims.play('walkright',true)
+            this.player.anims.play('walkright', true);
         }
         else {
             this.player.setVelocityX(0);
-            this.player.anims.play('walk',false)
+            this.player.anims.play('walk', true);
         }
+        
+        // if (this.cursors.left.isDown) {
+        //     this.player.setVelocityX(-100);
+        //     this.player.anims.play('walkleft',true)
+        // }
+        // else if (this.cursors.right.isDown) {
+        //     this.player.setVelocityX(100);
+        //     this.player.anims.play('walkright',true)
+        // }
+        // else {
+        //     this.player.setVelocityX(0);
+        //     this.player.anims.play('walk',false)
+        // }
 
         if (
             this.cursors.up.isDown &&
             this.player.body.blocked.down
         ) {
-            this.player.setVelocityY(-350);
+            this.player.setVelocityY(-300);
             }
         
     }
