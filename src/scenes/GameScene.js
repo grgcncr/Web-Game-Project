@@ -7,11 +7,19 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('player', 'assets/knight.png');
-        this.load.image('walkright1', 'assets/knight.png');
+        this.load.image('player', 'assets/knight1.png');
+        this.load.image('walkright1', 'assets/knight1.png');
         this.load.image('walkright2', 'assets/knight2.png');
         this.load.image('walkleft1', 'assets/knight3.png');
         this.load.image('walkleft2', 'assets/knight4.png');
+        this.load.image('jumpright1', 'assets/knightjumpright1.png');
+        this.load.image('jumpright2', 'assets/knightjumpright2.png');
+        this.load.image('jumpright3', 'assets/knightjumpright3.png');
+        this.load.image('jumpright4', 'assets/knightjumpright4.png');
+        this.load.image('jumpleft1', 'assets/knightjumpleft1.png');
+        this.load.image('jumpleft2', 'assets/knightjumpleft2.png');
+        this.load.image('jumpleft3', 'assets/knightjumpleft3.png');
+        this.load.image('jumpleft4', 'assets/knightjumpleft4.png');
         this.load.tilemapTiledJSON(
             'ground',
             'assets/tileset1/tileset1.tilemap.json'
@@ -24,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // this.time.timeScale = 0.5;
         this.player = this.physics.add.sprite(150, 120, 'player');
         // this.player.setCollideWorldBounds(true);
         this.player.setScale(1);
@@ -50,6 +59,17 @@ export default class GameScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         }); 
+        // this.anims.create({
+        //     key: 'jumpright',
+        //     frames: [
+        //         { key: 'jumpright1' },
+        //         { key: 'jumpright2' },
+        //         { key: 'jumpright3' },
+        //         { key: 'jumpright4' }
+        //     ],
+        //     frameRate: 1,
+        //     repeat: -1
+        // }); 
         const ground = this.make.tilemap({ key: 'ground' });
 
         const tileset = ground.addTilesetImage(
@@ -71,38 +91,163 @@ export default class GameScene extends Phaser.Scene {
 
 
     update() {
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.left)) {
+        let jump = false;
+        console.log(this.player.body.blocked.down, this.player.body.velocity.y);
+        // console.log(this.player.anims.currentAnim?.key);
+        if (this.cursors.left.isDown) {
             this.lastDirection = 'left';
         }
 
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.right)) {
+        if (this.cursors.right.isDown) {
             this.lastDirection = 'right';
         }
 
+        
         if (this.cursors.left.isDown && this.cursors.right.isDown) {
 
             if (this.lastDirection === 'left') {
                 this.player.setVelocityX(-100);
-                this.player.anims.play('walkleft', true);
+                // if (this.player.body.blocked.down){
+                //     this.player.anims.play('walkleft', true);
+                // }
             } else {
                 this.player.setVelocityX(100);
-                this.player.anims.play('walkright', true);
+                // if (this.player.body.blocked.down){
+                //     this.player.anims.play('walkright', true);
+                // }
             }
         
         }
         else if (this.cursors.left.isDown) {
             this.player.setVelocityX(-100);
-            this.player.anims.play('walkleft', true);
+            // if (this.player.body.blocked.down){
+            //     this.player.anims.play('walkleft', true);
+            // }
         }
         else if (this.cursors.right.isDown) {
             this.player.setVelocityX(100);
-            this.player.anims.play('walkright', true);
+            // if (this.player.body.blocked.down){
+            //     this.player.anims.play('walkright', true);
+            // }
         }
         else {
             this.player.setVelocityX(0);
-            this.player.anims.stop();
+            // this.player.anims.stop();
         }
         
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) {
+            this.player.setVelocityY(-150);
+            if (this.lastDirection === 'right'){
+                this.player.setTexture('jumpright1');
+                jump = true;
+            }else {
+                this.player.setTexture('jumpleft1');
+                jump = true;
+            }
+
+            // if(this.player.body.blocked.down){
+            //     if (this.lastDirection === 'right'){
+            //         this.player.setTexture('walkright1')
+            //         // break;
+            //     } else {
+            //         this.player.setTexture('walkleft1')
+            //         // break;
+            //     }
+            // }
+
+            this.time.delayedCall(120, () => {
+                if (this.lastDirection === 'right'){
+                    this.player.setTexture('jumpright2');
+                    jump = true;
+                }else {
+                    this.player.setTexture('jumpleft2');
+                    jump = true;
+                }
+            });
+
+            // if(this.player.body.touching.down){
+            //     if (this.lastDirection === 'right'){
+            //         this.player.setTexture('walkright1')
+            //         // break;
+            //         return;
+            //     } else {
+            //         this.player.setTexture('walkleft1')
+            //         // break;
+            //     }
+            // }
+
+            this.time.delayedCall(240, () => {
+                if (this.lastDirection === 'right'){
+                    this.player.setTexture('jumpright3');
+                    jump = true;
+                }else {
+                    this.player.setTexture('jumpleft3');
+                    jump = true;
+                }
+            });
+
+            // if(this.player.body.touching.down){
+            //     if (this.lastDirection === 'right'){
+            //         this.player.setTexture('walkright1')
+            //         // break;
+            //     } else {
+            //         this.player.setTexture('walkleft1')
+            //         // break;
+            //     }
+            // }
+
+            this.time.delayedCall(360, () => {
+                if (this.lastDirection === 'right'){
+                    this.player.setTexture('jumpright4');
+                    jump = true;
+                }else {
+                    this.player.setTexture('jumpleft4');
+                    jump = true;
+                }
+            });
+
+            // if(this.player.body.touching.down){
+            //     if (this.lastDirection === 'right'){
+            //         this.player.setTexture('walkright1')
+            //         // break;
+            //     } else {
+            //         this.player.setTexture('walkleft1')
+            //         // break;
+            //     }
+            // }
+
+            this.time.delayedCall(480, () => {
+                if (this.lastDirection === 'right'){
+                    this.player.setTexture('jumpright1'); 
+                    jump = true;
+                }else {
+                    this.player.setTexture('jumpleft1');
+                    jump = true;
+                }
+            });
+           
+            // if (this.player.body.blocked.down){
+            this.time.delayedCall(580, () => {
+                if (this.lastDirection === 'right'){
+                    this.player.setTexture('walkright1')
+                } else {
+                    this.player.setTexture('walkleft1')
+                }
+            });
+            // }
+        }else {
+            if (!jump){
+                if (this.player.body.velocity.x === 0) {
+                    this.player.anims.stop();
+                }
+                else if (this.player.body.velocity.x > 0) {
+                    this.player.anims.play('walkright', true);
+                }
+                else {
+                    this.player.anims.play('walkleft', true);
+                }
+            }
+        }
         // if (this.cursors.left.isDown) {
         //     this.player.setVelocityX(-100);
         //     this.player.anims.play('walkleft',true)
@@ -116,28 +261,15 @@ export default class GameScene extends Phaser.Scene {
         //     this.player.anims.play('walk',false)
         // }
 
-        if (
-            this.cursors.up.isDown &&
-            this.player.body.blocked.down
-        ) {
-            this.player.setVelocityY(-150);
-            }
+        
+        // if (!this.player.body.blocked.down){
+        //     this.player.anims.play('jump', true)
+        // }
+        // if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
+            
+        // }
         
     }
-    // update() {
-    //     if (this.cursors.left.isDown) {
-    //         this.player.setVelocityX(-200);
-    //     }
-    //     else if (this.cursors.right.isDown) {
-    //         this.player.setVelocityX(200);
-    //     }
-    //     else {
-    //         this.player.setVelocityX(0);
-    //     }
-    //     if (this.cursors.up.isDown && this.player.body.touching.down) {
-    //         this.player.setVelocityY(-500);
-    //     }
-    // }
 
 }
 
