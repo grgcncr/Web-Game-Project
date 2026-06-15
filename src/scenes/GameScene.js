@@ -24,6 +24,12 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('attackright2', 'assets/knightattackright2.png');
         this.load.image('attackleft1', 'assets/knightattackleft1.png');
         this.load.image('attackleft2', 'assets/knightattackleft2.png');
+        this.load.image('swordright1', 'assets/swordright1.png');
+        this.load.image('swordright2', 'assets/swordright2.png');
+        this.load.image('swordright3', 'assets/swordright3.png');
+        this.load.image('swordleft1', 'assets/swordleft1.png');
+        this.load.image('swordleft2', 'assets/swordleft2.png');
+        this.load.image('swordleft3', 'assets/swordleft3.png');
         this.load.tilemapTiledJSON(
             'ground',
             'assets/tileset1/tileset1.tilemap.json'
@@ -107,6 +113,30 @@ export default class GameScene extends Phaser.Scene {
             frameRate: 15,
             repeat: 0
         }); 
+        this.anims.create({
+            key: 'swordslashright',
+            frames: [
+                { key: 'swordright1' },
+                { key: 'swordright2' },
+                { key: 'swordright3' }
+            ],
+            frameRate: 15,
+            repeat: 0
+        });
+        this.anims.create({
+            key: 'swordslashleft',
+            frames: [
+                { key: 'swordleft1' },
+                { key: 'swordleft2' },
+                { key: 'swordleft3' }
+            ],
+            frameRate: 15,
+            repeat: 0
+        });
+
+        this.sword = this.add.sprite(this.player.x, this.player.y, 'sword1');
+
+        this.sword.setVisible(false);
         const ground = this.make.tilemap({ key: 'ground' });
 
         const tileset = ground.addTilesetImage(
@@ -122,6 +152,73 @@ export default class GameScene extends Phaser.Scene {
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
         this.lastDirection = 'right';
+        this.isAttacking = false;
+        
+        this.player.on('animationcomplete', (anim) => {
+
+            if (
+                anim.key === 'attackright' ||
+                anim.key === 'attackleft'
+            ) {
+                this.isAttacking = false;
+
+                if (this.lastDirection === 'right') {
+                    this.player.setTexture('walkright1');
+                } else {
+                    this.player.setTexture('walkleft1');
+                }
+            }
+        });
+        
+        this.sword.on('animationcomplete', () => {
+            this.sword.setVisible(false);
+        });
+
+        this.sword.on('animationupdate', (anim, frame) => {
+
+            if (frame.textureFrame === 'swordright1') {
+                this.sword.setPosition(
+                    this.player.x + 8,
+                    this.player.y + 1
+                );
+            }
+
+            if (frame.textureFrame === 'swordright2') {
+                this.sword.setPosition(
+                    this.player.x + 8,
+                    this.player.y - 4
+                );
+            }
+
+            if (frame.textureFrame === 'swordright3') {
+                this.sword.setPosition(
+                    this.player.x + 12,
+                    this.player.y
+                );
+            }
+
+            if (frame.textureFrame === 'swordleft1') {
+                this.sword.setPosition(
+                    this.player.x + 4,
+                    this.player.y - 8
+                );
+            }
+
+            if (frame.textureFrame === 'swordleft2') {
+                this.sword.setPosition(
+                    this.player.x + 8,
+                    this.player.y - 4
+                );
+            }
+
+            if (frame.textureFrame === 'swordleft3') {
+                this.sword.setPosition(
+                    this.player.x + 12,
+                    this.player.y
+                );
+            }
+
+        });
 
     }
 
@@ -131,6 +228,47 @@ export default class GameScene extends Phaser.Scene {
         // console.log(this.player.anims.currentAnim?.key);
         // console.log(this.player.frame.name);
         
+        // ATTACK LOGIC
+
+        if (this.isAttacking) {
+            if (this.player.body.velocity.y === 0){
+                this.player.setVelocityX(0);
+            }
+            return;
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.spacebar) && !this.isAttacking) {
+            this.isAttacking = true;
+            if (this.player.body.velocity.y === 0){
+                this.player.setVelocityX(0);
+            }
+
+            if (this.lastDirection === 'right') {
+                this.player.anims.play('attackright',true);
+                this.sword.setVisible(true);
+                this.sword.anims.play('swordslashright', true);
+            
+            } else {
+                this.player.anims.play('attackleft',true);
+                this.sword.setVisible(true);
+                this.sword.anims.play('swordslashleft', true);
+            
+            }
+            return;
+        }
+
+        if (this.lastDirection === 'right') {
+            this.sword.setPosition(
+                this.player.x + 8,
+                this.player.y - 2
+            );
+        }
+        else {
+            this.sword.setPosition(
+                this.player.x - 8,
+                this.player.y - 2
+            );
+        }
 
         // WALK LOGIC
 
@@ -205,12 +343,12 @@ export default class GameScene extends Phaser.Scene {
         
         }
         
-        // ATTACK LOGIC
+        
 
-        if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
-            this.player.anims.play('attackright',true);
-            this.player.setVelocityX(0);
-        }
+        // if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
+        //     this.player.anims.play('attackright',true);
+        //     this.player.setVelocityX(0);
+        // }
         // console.log(this.player.anims.currentFrame?.index);
     }
 
