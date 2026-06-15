@@ -32,13 +32,16 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // this.player.on('animationcomplete', (anim) => {
+        //     console.log('completed:', anim.key);
+        // });
         // this.time.timeScale = 0.5;
         this.player = this.physics.add.sprite(150, 120, 'player');
         // this.player.setCollideWorldBounds(true);
         this.player.setScale(1);
         // this.cameras.main.startFollow(this.player);
-        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-        this.cameras.main.setDeadzone(50, 100);
+        this.cameras.main.startFollow(this.player, true, 1, 1);
+        this.cameras.main.setDeadzone(80, 100);
         this.player.body.setSize(10, 16);
         this.player.body.setOffset(3, 0);
         this.anims.create({
@@ -59,17 +62,30 @@ export default class GameScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         }); 
-        // this.anims.create({
-        //     key: 'jumpright',
-        //     frames: [
-        //         { key: 'jumpright1' },
-        //         { key: 'jumpright2' },
-        //         { key: 'jumpright3' },
-        //         { key: 'jumpright4' }
-        //     ],
-        //     frameRate: 1,
-        //     repeat: -1
-        // }); 
+        this.anims.create({
+            key: 'jumpright',
+            frames: [
+                { key: 'jumpright1' },
+                { key: 'jumpright2' },
+                { key: 'jumpright3' },
+                { key: 'jumpright4' },
+                { key: 'jumpright1' }
+            ],
+            frameRate: 8,
+            repeat: 0
+        }); 
+        this.anims.create({
+            key: 'jumpleft',
+            frames: [
+                { key: 'jumpleft1' },
+                { key: 'jumpleft2' },
+                { key: 'jumpleft3' },
+                { key: 'jumpleft4' },
+                { key: 'jumpleft1' }
+            ],
+            frameRate: 8,
+            repeat: 0
+        }); 
         const ground = this.make.tilemap({ key: 'ground' });
 
         const tileset = ground.addTilesetImage(
@@ -91,27 +107,41 @@ export default class GameScene extends Phaser.Scene {
 
 
     update() {
-        let jump = false;
-        console.log(this.player.body.blocked.down, this.player.body.velocity.y);
-        // console.log(this.player.anims.currentAnim?.key);
-        if (this.cursors.left.isDown) {
-            this.lastDirection = 'left';
-        }
+        // let jump = false;
+        // console.log(this.player.body.blocked.down, this.player.body.velocity.y);
+        console.log(this.player.anims.currentAnim?.key);
+        // console.log(this.player.frame.name);
+        
 
-        if (this.cursors.right.isDown) {
+        // WALK LOGIC
+
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.right)){
+            if (this.player.texture.key === "walkright1"){
+                this.player.setTexture('walkright2');
+            }else{
+                this.player.setTexture('walkright1');
+            }
             this.lastDirection = 'right';
         }
 
-        
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.left)){
+            if (this.player.texture.key === "walkleft1"){
+                this.player.setTexture('walkleft2');
+            }else{
+                this.player.setTexture('walkleft1');
+            }
+            this.lastDirection = 'left';
+        }
+
         if (this.cursors.left.isDown && this.cursors.right.isDown) {
 
             if (this.lastDirection === 'left') {
-                this.player.setVelocityX(-100);
+                this.player.setVelocityX(-50);
                 // if (this.player.body.blocked.down){
                 //     this.player.anims.play('walkleft', true);
                 // }
             } else {
-                this.player.setVelocityX(100);
+                this.player.setVelocityX(50);
                 // if (this.player.body.blocked.down){
                 //     this.player.anims.play('walkright', true);
                 // }
@@ -119,13 +149,13 @@ export default class GameScene extends Phaser.Scene {
         
         }
         else if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-100);
+            this.player.setVelocityX(-50);
             // if (this.player.body.blocked.down){
             //     this.player.anims.play('walkleft', true);
             // }
         }
         else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(100);
+            this.player.setVelocityX(50);
             // if (this.player.body.blocked.down){
             //     this.player.anims.play('walkright', true);
             // }
@@ -135,119 +165,44 @@ export default class GameScene extends Phaser.Scene {
             // this.player.anims.stop();
         }
         
+
+        if(this.player.body.blocked.down){
+            if (this.player.body.velocity.x === 0) {
+                if (this.lastDirection === 'right'){
+                    // this.player.setTexture('jumpright1');
+                    this.player.setTexture('walkright1');
+                }else {
+                    this.player.setTexture('walkleft1');
+                }
+                // this.player.anims.pause();
+            }
+            else if (this.player.body.velocity.x > 0) {
+                if (this.player.anims.currentAnim?.key !== 'walkright') {
+                    this.player.anims.play('walkright');
+                }
+            }
+            else {
+                if (this.player.anims.currentAnim?.key !== 'walkleft') {
+                    this.player.anims.play('walkleft');
+                }
+            }
+        }  
+
+        // JUMP LOGIC
+        
         if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) {
             this.player.setVelocityY(-150);
             if (this.lastDirection === 'right'){
-                this.player.setTexture('jumpright1');
-                jump = true;
+                // this.player.setTexture('jumpright1');
+                this.player.anims.play('jumpright');
             }else {
-                this.player.setTexture('jumpleft1');
-                jump = true;
+                this.player.anims.play('jumpleft');
             }
-
-            // if(this.player.body.blocked.down){
-            //     if (this.lastDirection === 'right'){
-            //         this.player.setTexture('walkright1')
-            //         // break;
-            //     } else {
-            //         this.player.setTexture('walkleft1')
-            //         // break;
-            //     }
-            // }
-
-            this.time.delayedCall(120, () => {
-                if (this.lastDirection === 'right'){
-                    this.player.setTexture('jumpright2');
-                    jump = true;
-                }else {
-                    this.player.setTexture('jumpleft2');
-                    jump = true;
-                }
-            });
-
-            // if(this.player.body.touching.down){
-            //     if (this.lastDirection === 'right'){
-            //         this.player.setTexture('walkright1')
-            //         // break;
-            //         return;
-            //     } else {
-            //         this.player.setTexture('walkleft1')
-            //         // break;
-            //     }
-            // }
-
-            this.time.delayedCall(240, () => {
-                if (this.lastDirection === 'right'){
-                    this.player.setTexture('jumpright3');
-                    jump = true;
-                }else {
-                    this.player.setTexture('jumpleft3');
-                    jump = true;
-                }
-            });
-
-            // if(this.player.body.touching.down){
-            //     if (this.lastDirection === 'right'){
-            //         this.player.setTexture('walkright1')
-            //         // break;
-            //     } else {
-            //         this.player.setTexture('walkleft1')
-            //         // break;
-            //     }
-            // }
-
-            this.time.delayedCall(360, () => {
-                if (this.lastDirection === 'right'){
-                    this.player.setTexture('jumpright4');
-                    jump = true;
-                }else {
-                    this.player.setTexture('jumpleft4');
-                    jump = true;
-                }
-            });
-
-            // if(this.player.body.touching.down){
-            //     if (this.lastDirection === 'right'){
-            //         this.player.setTexture('walkright1')
-            //         // break;
-            //     } else {
-            //         this.player.setTexture('walkleft1')
-            //         // break;
-            //     }
-            // }
-
-            this.time.delayedCall(480, () => {
-                if (this.lastDirection === 'right'){
-                    this.player.setTexture('jumpright1'); 
-                    jump = true;
-                }else {
-                    this.player.setTexture('jumpleft1');
-                    jump = true;
-                }
-            });
-           
-            // if (this.player.body.blocked.down){
-            this.time.delayedCall(580, () => {
-                if (this.lastDirection === 'right'){
-                    this.player.setTexture('walkright1')
-                } else {
-                    this.player.setTexture('walkleft1')
-                }
-            });
-            // }
-        }else {
-            if (!jump){
-                if (this.player.body.velocity.x === 0) {
-                    this.player.anims.stop();
-                }
-                else if (this.player.body.velocity.x > 0) {
-                    this.player.anims.play('walkright', true);
-                }
-                else {
-                    this.player.anims.play('walkleft', true);
-                }
-            }
+        
         }
+        
+          
+        
         // if (this.cursors.left.isDown) {
         //     this.player.setVelocityX(-100);
         //     this.player.anims.play('walkleft',true)
@@ -268,7 +223,7 @@ export default class GameScene extends Phaser.Scene {
         // if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
             
         // }
-        
+        console.log(this.player.anims.currentFrame?.index);
     }
 
 }
