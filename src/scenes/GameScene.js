@@ -156,10 +156,7 @@ export default class GameScene extends Phaser.Scene {
         
         this.player.on('animationcomplete', (anim) => {
 
-            if (
-                anim.key === 'attackright' ||
-                anim.key === 'attackleft'
-            ) {
+            if (anim.key === 'attackright' || anim.key === 'attackleft') {
                 this.isAttacking = false;
 
                 if (this.lastDirection === 'right') {
@@ -173,53 +170,6 @@ export default class GameScene extends Phaser.Scene {
         this.sword.on('animationcomplete', () => {
             this.sword.setVisible(false);
         });
-
-        this.sword.on('animationupdate', (anim, frame) => {
-
-            if (frame.textureFrame === 'swordright1') {
-                this.sword.setPosition(
-                    this.player.x + 8,
-                    this.player.y + 1
-                );
-            }
-
-            if (frame.textureFrame === 'swordright2') {
-                this.sword.setPosition(
-                    this.player.x + 8,
-                    this.player.y - 4
-                );
-            }
-
-            if (frame.textureFrame === 'swordright3') {
-                this.sword.setPosition(
-                    this.player.x + 12,
-                    this.player.y
-                );
-            }
-
-            if (frame.textureFrame === 'swordleft1') {
-                this.sword.setPosition(
-                    this.player.x + 4,
-                    this.player.y - 8
-                );
-            }
-
-            if (frame.textureFrame === 'swordleft2') {
-                this.sword.setPosition(
-                    this.player.x + 8,
-                    this.player.y - 4
-                );
-            }
-
-            if (frame.textureFrame === 'swordleft3') {
-                this.sword.setPosition(
-                    this.player.x + 12,
-                    this.player.y
-                );
-            }
-
-        });
-
     }
 
 
@@ -229,6 +179,52 @@ export default class GameScene extends Phaser.Scene {
         // console.log(this.player.frame.name);
         
         // ATTACK LOGIC
+        // console.log('isAttacking', this.isAttacking);
+        // console.log(this.sword.anims.currentFrame?.textureKey);
+        
+        switch (this.sword.anims.currentFrame?.textureKey){
+            case 'swordright1':
+                this.sword.setPosition(
+                    this.player.x + 6,
+                    this.player.y - 12
+                );
+                break;
+            
+            case 'swordleft1':
+                this.sword.setPosition(
+                    this.player.x - 6,
+                    this.player.y - 12
+                );
+                break;
+         
+            case 'swordright2':
+                this.sword.setPosition(
+                    this.player.x + 13,
+                    this.player.y - 10
+                );
+                break;
+            
+            case 'swordleft2':
+                this.sword.setPosition(
+                    this.player.x - 13  ,
+                    this.player.y - 10
+                );
+                break;
+            
+            case 'swordright3':
+                this.sword.setPosition(
+                    this.player.x + 12,
+                    this.player.y + 4
+                );
+                break;
+            
+            case 'swordleft3':
+                this.sword.setPosition(
+                    this.player.x - 12,
+                    this.player.y + 4
+                );
+                break;
+        }
 
         if (this.isAttacking) {
             if (this.player.body.velocity.y === 0){
@@ -245,30 +241,25 @@ export default class GameScene extends Phaser.Scene {
 
             if (this.lastDirection === 'right') {
                 this.player.anims.play('attackright',true);
-                this.sword.setVisible(true);
+                this.sword.setPosition(
+                    this.player.x + 6,
+                    this.player.y - 12
+                );
                 this.sword.anims.play('swordslashright', true);
-            
+                this.sword.setVisible(true);
             } else {
                 this.player.anims.play('attackleft',true);
-                this.sword.setVisible(true);
+                this.sword.setPosition(
+                    this.player.x - 6,
+                    this.player.y - 12
+                );
                 this.sword.anims.play('swordslashleft', true);
-            
+                this.sword.setVisible(true);
+
             }
             return;
         }
 
-        if (this.lastDirection === 'right') {
-            this.sword.setPosition(
-                this.player.x + 8,
-                this.player.y - 2
-            );
-        }
-        else {
-            this.sword.setPosition(
-                this.player.x - 8,
-                this.player.y - 2
-            );
-        }
 
         // WALK LOGIC
 
@@ -344,12 +335,7 @@ export default class GameScene extends Phaser.Scene {
         }
         
         
-
-        // if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
-        //     this.player.anims.play('attackright',true);
-        //     this.player.setVelocityX(0);
-        // }
-        // console.log(this.player.anims.currentFrame?.index);
+    
     }
 
 }
