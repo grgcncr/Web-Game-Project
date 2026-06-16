@@ -30,6 +30,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('swordleft1', 'assets/swordleft1.png');
         this.load.image('swordleft2', 'assets/swordleft2.png');
         this.load.image('swordleft3', 'assets/swordleft3.png');
+
+        this.load.audio('footstep', 'assets/footstep1.wav');
         
         // this.load.image('rocktile', 'assets/rocktile1.png');
         
@@ -192,6 +194,22 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
         });
+
+        this.footstep = this.sound.add('footstep');
+        this.player.on('animationupdate', (anim, frame) => {
+
+            if (
+                (anim.key === 'walkright' ||
+                anim.key === 'walkleft')
+                &&
+                frame.index === 1
+                &&
+                !this.footstep.isPlaying
+            ) {
+                this.footstep.play();
+            }
+
+        });
         
         this.sword.on('animationcomplete', () => {
             this.sword.setVisible(false);
@@ -325,6 +343,7 @@ export default class GameScene extends Phaser.Scene {
 
         }else {
             this.player.setVelocityX(0);
+            this.footstep.stop();
             // this.player.anims.stop();
         }
         
