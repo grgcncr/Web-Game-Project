@@ -30,6 +30,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('swordleft1', 'assets/swordleft1.png');
         this.load.image('swordleft2', 'assets/swordleft2.png');
         this.load.image('swordleft3', 'assets/swordleft3.png');
+        
+        // this.load.image('rocktile', 'assets/rocktile1.png');
+        
         this.load.tilemapTiledJSON(
             'ground',
             'assets/tileset1/tileset1.tilemap.json'
@@ -137,6 +140,29 @@ export default class GameScene extends Phaser.Scene {
         this.sword = this.add.sprite(this.player.x, this.player.y, 'sword1');
 
         this.sword.setVisible(false);
+        
+        // this.ground = this.physics.add.staticImage(
+        //     400,
+        //     208,
+        //     null
+        // );
+
+        // this.ground.setSize(800, 16);
+        // this.ground.refreshBody();
+
+        // this.physics.add.collider(
+        //     this.player,
+        //     this.ground
+        // );
+        // for (let x = 0; x < 50; x++) {
+        //     this.add.image(
+        //         x * 16,
+        //         200,
+        //         'rocktile'
+        //     ).setOrigin(0);
+        // }
+        
+        
         const ground = this.make.tilemap({ key: 'ground' });
 
         const tileset = ground.addTilesetImage(
@@ -179,6 +205,7 @@ export default class GameScene extends Phaser.Scene {
         // console.log(this.player.frame.name);
         
         // ATTACK LOGIC
+        
         // console.log('isAttacking', this.isAttacking);
         // console.log(this.sword.anims.currentFrame?.textureKey);
         
@@ -263,22 +290,24 @@ export default class GameScene extends Phaser.Scene {
 
         // WALK LOGIC
 
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.right)){
-            if (this.player.texture.key === "walkright1"){
-                this.player.setTexture('walkright2');
-            }else{
-                this.player.setTexture('walkright1');
+        if (this.player.body.blocked.down){
+            if (Phaser.Input.Keyboard.JustDown(this.cursors.right) ){
+                if (this.player.texture.key === "walkright1"){
+                    this.player.setTexture('walkright2');
+                }else{
+                    this.player.setTexture('walkright1');
+                }
+                this.lastDirection = 'right';
             }
-            this.lastDirection = 'right';
-        }
 
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.left)){
-            if (this.player.texture.key === "walkleft1"){
-                this.player.setTexture('walkleft2');
-            }else{
-                this.player.setTexture('walkleft1');
+            if (Phaser.Input.Keyboard.JustDown(this.cursors.left)){
+                if (this.player.texture.key === "walkleft1"){
+                    this.player.setTexture('walkleft2');
+                }else{
+                    this.player.setTexture('walkleft1');
+                }
+                this.lastDirection = 'left';
             }
-            this.lastDirection = 'left';
         }
 
         if (this.cursors.left.isDown && this.cursors.right.isDown) {
