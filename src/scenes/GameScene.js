@@ -31,18 +31,20 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('swordleft2', 'assets/swordleft2.png');
         this.load.image('swordleft3', 'assets/swordleft3.png');
 
-        this.load.audio('footstep', 'assets/footstep1.wav');
+        this.load.image('UI-Bar', 'assets/UI-Bar.png')
+      
+        // this.load.audio('footstep', 'assets/footstep1.wav');
         
         // this.load.image('rocktile', 'assets/rocktile1.png');
         
         this.load.tilemapTiledJSON(
             'ground',
-            'assets/tileset1/tileset1.tilemap.json'
+            'assets/rocktileset3/rocktileset3.tilemap.json'
         );
 
         this.load.image(
             'terrain',
-            'assets/tileset1/tilesets/simpletile.png'
+            'assets/rocktileset3/tilesets/rocktile3.png'
         );
     }
 
@@ -53,7 +55,7 @@ export default class GameScene extends Phaser.Scene {
         this.player.setScale(1);
         // this.cameras.main.startFollow(this.player);
         this.cameras.main.startFollow(this.player, true, 1, 1);
-        this.cameras.main.setDeadzone(80, 100);
+        this.cameras.main.setDeadzone(60, 100);
         this.player.body.setSize(10, 16);
         this.player.body.setOffset(3, 0);
         this.anims.create({
@@ -62,7 +64,7 @@ export default class GameScene extends Phaser.Scene {
                 { key: 'walkright1' },
                 { key: 'walkright2' }
             ],
-            frameRate: 5,
+            frameRate: 6,
             repeat: -1
         }); 
         this.anims.create({
@@ -71,7 +73,7 @@ export default class GameScene extends Phaser.Scene {
                 { key: 'walkleft1' },
                 { key: 'walkleft2' }
             ],
-            frameRate: 5,
+            frameRate: 6,
             repeat: -1
         }); 
         this.anims.create({
@@ -168,14 +170,25 @@ export default class GameScene extends Phaser.Scene {
         const ground = this.make.tilemap({ key: 'ground' });
 
         const tileset = ground.addTilesetImage(
-            'simpletile',
+            'rocktile3',
             'terrain'
         );
         this.textures.get('terrain').setFilter(Phaser.Textures.NEAREST);
-        const groundLayer = ground.createLayer('Layer 1',tileset,0,155);
+        const groundLayer = ground.createLayer('Layer 1',tileset,0,136);
         groundLayer.setCollisionByExclusion([-1]);
         this.physics.add.collider(this.player, groundLayer);
         
+        this.ui_Bar = this.add.image(
+            70,
+            87,
+            'UI-Bar'
+        );
+
+        this.ui_Bar.setScrollFactor(0);
+        this.ui_Bar.setDepth(100);
+
+        // this.uiBar.setScrollFactor(0);
+
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
@@ -195,25 +208,26 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
-        this.footstep = this.sound.add('footstep');
-        this.player.on('animationupdate', (anim, frame) => {
+        // this.footstep = this.sound.add('footstep');
+        // this.player.on('animationupdate', (anim, frame) => {
 
-            if (
-                (anim.key === 'walkright' ||
-                anim.key === 'walkleft')
-                &&
-                frame.index === 1
-                &&
-                !this.footstep.isPlaying
-            ) {
-                this.footstep.play();
-            }
+        //     if (
+        //         (anim.key === 'walkright' ||
+        //         anim.key === 'walkleft')
+        //         &&
+        //         frame.index === 1
+        //         &&
+        //         !this.footstep.isPlaying
+        //     ) {
+        //         this.footstep.play();
+        //     }
 
-        });
+        // });
         
         this.sword.on('animationcomplete', () => {
             this.sword.setVisible(false);
         });
+
     }
 
 
@@ -343,7 +357,7 @@ export default class GameScene extends Phaser.Scene {
 
         }else {
             this.player.setVelocityX(0);
-            this.footstep.stop();
+            // this.footstep.stop();
             // this.player.anims.stop();
         }
         

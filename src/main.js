@@ -3,7 +3,7 @@ import GameScene from './scenes/GameScene';
 
 const config = {
     type: Phaser.AUTO,
-    width: 200,
+    width: 140,
     height: 100,
     pixelArt: true,
     backgroundColor: '#081820',
