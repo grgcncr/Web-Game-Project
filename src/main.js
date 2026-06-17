@@ -6,7 +6,12 @@ const config = {
     width: 140,
     height: 100,
     pixelArt: true,
+    roundPixels: true,
     backgroundColor: '#081820',
+    fps: {
+        target: 50,
+        forceSetTimeOut: true
+    },
     physics: {
         default: 'arcade',
         arcade: {

@@ -32,6 +32,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('swordleft3', 'assets/swordleft3.png');
 
         this.load.image('UI-Bar', 'assets/UI-Bar.png')
+        this.load.image('Location-Dungeon', 'assets/Location-Dungeon.png')
+        this.load.image('Heart', 'assets/Heart.png')
       
         // this.load.audio('footstep', 'assets/footstep1.wav');
         
@@ -49,22 +51,30 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        // this.time.timeScale = 0.5;
         this.player = this.physics.add.sprite(150, 120, 'player');
-        // this.player.setCollideWorldBounds(true);
         this.player.setScale(1);
-        // this.cameras.main.startFollow(this.player);
-        this.cameras.main.startFollow(this.player, true, 1, 1);
-        this.cameras.main.setDeadzone(60, 100);
+        this.cameras.main.startFollow(this.player);
+        // this.cameras.main.setLerp(1,1);
+        this.cameras.main.setDeadzone(80, 100);
+        this.cameras.roundPixels = true;
+        // UI CAMERA
+        this.uiCamera = this.cameras.add(0, 0, 140, 100);
+        this.uiCamera.setScroll(0, 0);
+        this.uiCamera.roundPixels = true;
+        
+
+        
+
         this.player.body.setSize(10, 16);
         this.player.body.setOffset(3, 0);
+        this.playerxvelocity = 50;
         this.anims.create({
             key: 'walkright',
             frames: [
                 { key: 'walkright1' },
                 { key: 'walkright2' }
             ],
-            frameRate: 6,
+            frameRate: 5,
             repeat: -1
         }); 
         this.anims.create({
@@ -73,7 +83,7 @@ export default class GameScene extends Phaser.Scene {
                 { key: 'walkleft1' },
                 { key: 'walkleft2' }
             ],
-            frameRate: 6,
+            frameRate: 5,
             repeat: -1
         }); 
         this.anims.create({
@@ -145,27 +155,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.sword.setVisible(false);
         
-        // this.ground = this.physics.add.staticImage(
-        //     400,
-        //     208,
-        //     null
-        // );
-
-        // this.ground.setSize(800, 16);
-        // this.ground.refreshBody();
-
-        // this.physics.add.collider(
-        //     this.player,
-        //     this.ground
-        // );
-        // for (let x = 0; x < 50; x++) {
-        //     this.add.image(
-        //         x * 16,
-        //         200,
-        //         'rocktile'
-        //     ).setOrigin(0);
-        // }
-        
         
         const ground = this.make.tilemap({ key: 'ground' });
 
@@ -174,20 +163,39 @@ export default class GameScene extends Phaser.Scene {
             'terrain'
         );
         this.textures.get('terrain').setFilter(Phaser.Textures.NEAREST);
-        const groundLayer = ground.createLayer('Layer 1',tileset,0,136);
+        const groundLayer = ground.createLayer('Layer 1',tileset,0,137);
         groundLayer.setCollisionByExclusion([-1]);
         this.physics.add.collider(this.player, groundLayer);
         
-        this.ui_Bar = this.add.image(
-            70,
-            87,
-            'UI-Bar'
-        );
+        this.ui_Bar = this.add.image(70, 87, 'UI-Bar');
 
         this.ui_Bar.setScrollFactor(0);
         this.ui_Bar.setDepth(100);
 
-        // this.uiBar.setScrollFactor(0);
+        this.location_dungeon = this.add.image(117, 82, 'Location-Dungeon');
+        
+        this.location_dungeon.setScrollFactor(0);
+        this.location_dungeon.setDepth(101);
+
+        this.heart1 = this.add.image(10, 92, 'Heart');
+        this.heart1.setScrollFactor(0);
+        this.heart1.setDepth(101);
+
+        this.heart2 = this.add.image(22, 92, 'Heart');
+        this.heart2.setScrollFactor(0);
+        this.heart2.setDepth(101);
+
+        this.heart3 = this.add.image(34, 92, 'Heart');
+        this.heart3.setScrollFactor(0);
+        this.heart3.setDepth(101);
+
+        this.cameras.main.ignore([
+            this.ui_Bar,
+            this.location_dungeon,
+            this.heart1,
+            this.heart2,
+            this.heart3
+        ]);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -207,22 +215,6 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
         });
-
-        // this.footstep = this.sound.add('footstep');
-        // this.player.on('animationupdate', (anim, frame) => {
-
-        //     if (
-        //         (anim.key === 'walkright' ||
-        //         anim.key === 'walkleft')
-        //         &&
-        //         frame.index === 1
-        //         &&
-        //         !this.footstep.isPlaying
-        //     ) {
-        //         this.footstep.play();
-        //     }
-
-        // });
         
         this.sword.on('animationcomplete', () => {
             this.sword.setVisible(false);
@@ -232,14 +224,8 @@ export default class GameScene extends Phaser.Scene {
 
 
     update() {
-        // console.log(this.player.body.blocked.down, this.player.body.velocity.y);
-        // console.log(this.player.anims.currentAnim?.key);
-        // console.log(this.player.frame.name);
         
         // ATTACK LOGIC
-        
-        // console.log('isAttacking', this.isAttacking);
-        // console.log(this.sword.anims.currentFrame?.textureKey);
         
         switch (this.sword.anims.currentFrame?.textureKey){
             case 'swordright1':
@@ -345,15 +331,15 @@ export default class GameScene extends Phaser.Scene {
         if (this.cursors.left.isDown && this.cursors.right.isDown) {
 
             if (this.lastDirection === 'left') {
-                this.player.setVelocityX(-50);
+                this.player.setVelocityX(-this.playerxvelocity);
             } else {
-                this.player.setVelocityX(50);
+                this.player.setVelocityX(this.playerxvelocity);
             }
         
         }else if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-50);
+            this.player.setVelocityX(-this.playerxvelocity);
         }else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(50);
+            this.player.setVelocityX(this.playerxvelocity);
 
         }else {
             this.player.setVelocityX(0);
@@ -395,7 +381,6 @@ export default class GameScene extends Phaser.Scene {
             }
         
         }
-        
         
     
     }
