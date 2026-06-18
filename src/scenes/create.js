@@ -14,7 +14,7 @@ export function create(GameScene) {
 
     
 
-    this.player.body.setSize(10, 16);
+    this.player.body.setSize(9, 16);
     this.player.body.setOffset(3, 0);
     this.playerxvelocity = 50;
     this.anims.create({
@@ -103,6 +103,11 @@ export function create(GameScene) {
     this.sword = this.add.sprite(this.player.x, this.player.y, 'sword1');
 
     this.sword.setVisible(false);
+    this.swordHitbox = this.physics.add.sprite(0, 0, null);
+
+    this.swordHitbox.body.setSize(16, 16);
+    this.swordHitbox.body.setAllowGravity(false);
+    this.swordHitbox.setVisible(false);
     
     
     const ground = this.make.tilemap({ key: 'ground' });
