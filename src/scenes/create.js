@@ -1,19 +1,16 @@
 import Phaser from 'phaser';
 export function create(GameScene) {
     this.player = this.physics.add.sprite(150, 120, 'player');
-    this.player.setScale(1);
+    // this.player.setScale(1);
     this.cameras.main.startFollow(this.player);
     // this.cameras.main.setLerp(1,1);
     this.cameras.main.setDeadzone(80, 100);
-    this.cameras.roundPixels = true;
+    // this.cameras.roundPixels = true;
     // UI CAMERA
     this.uiCamera = this.cameras.add(0, 0, 140, 100);
     this.uiCamera.setScroll(0, 0);
     this.uiCamera.roundPixels = true;
     
-
-    
-
     this.player.body.setSize(9, 16);
     this.player.body.setOffset(3, 0);
     this.playerxvelocity = 50;
@@ -100,14 +97,17 @@ export function create(GameScene) {
         repeat: 0
     });
 
-    this.sword = this.add.sprite(this.player.x, this.player.y, 'sword1');
-
+    this.sword = this.physics.add.sprite(this.player.x, this.player.y, 'sword1');
+    this.sword.body.setSize(11, 10);
+    this.sword.body.setOffset(3, 0);
     this.sword.setVisible(false);
-    this.swordHitbox = this.physics.add.sprite(0, 0, null);
-
-    this.swordHitbox.body.setSize(16, 16);
-    this.swordHitbox.body.setAllowGravity(false);
-    this.swordHitbox.setVisible(false);
+    this.sword.body.moves = false;
+    // this.swordHitbox = this.physics.add.sprite(10, 100, null);
+    // console.log(this.swordHitbox);
+    // this.swordHitbox.body.setSize(16, 16);
+    this.sword.body.setAllowGravity(false);
+    // this.swordHitbox.setVisible(false);
+    
     
     
     const ground = this.make.tilemap({ key: 'ground' });
@@ -167,10 +167,51 @@ export function create(GameScene) {
             } else {
                 this.player.setTexture('walkleft1');
             }
+            this.sword.body.enable = false;
         }
     });
     
     this.sword.on('animationcomplete', () => {
         this.sword.setVisible(false);
     });
+
+    // Scanlines
+    // const scanlines = this.add.graphics();
+
+    // scanlines.lineStyle(
+    //     1,
+    //     0x000000,
+    //     0.10
+    // );
+
+    // for (let y = 0; y < 100; y += 2) {
+    //     scanlines.lineBetween(
+    //         0,
+    //         y,
+    //         140,
+    //         y
+    //     );
+    // }
+
+    // scanlines.setScrollFactor(0);
+    // scanlines.setDepth(9998);
+
+
+    // // Vignette
+    // const vignette = this.add.graphics();
+
+    // vignette.fillStyle(
+    //     0x000000,
+    //     0.12
+    // );
+
+    // vignette.fillRect(
+    //     0,
+    //     0,
+    //     140,
+    //     100
+    // );
+
+    // vignette.setScrollFactor(0);
+    // vignette.setDepth(9999);
 }

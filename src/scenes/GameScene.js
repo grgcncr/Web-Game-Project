@@ -26,6 +26,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x + 6,
                     this.player.y - 12
                 );
+                this.sword.body.enable = true;
                 break;
             
             case 'swordleft1':
@@ -33,6 +34,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x - 6,
                     this.player.y - 12
                 );
+                this.sword.body.enable = true;
                 break;
          
             case 'swordright2':
@@ -40,6 +42,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x + 13,
                     this.player.y - 10
                 );
+                // this.sword.body.enable = true;
                 break;
             
             case 'swordleft2':
@@ -47,6 +50,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x - 13  ,
                     this.player.y - 10
                 );
+                // this.sword.body.enable = true;
                 break;
             
             case 'swordright3':
@@ -54,6 +58,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x + 12,
                     this.player.y + 4
                 );
+                // this.sword.body.enable = true;
                 break;
             
             case 'swordleft3':
@@ -61,6 +66,7 @@ export default class GameScene extends Phaser.Scene {
                     this.player.x - 12,
                     this.player.y + 4
                 );
+                // this.sword.body.enable = true;
                 break;
         }
 
