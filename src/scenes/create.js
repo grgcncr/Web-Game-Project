@@ -175,6 +175,17 @@ export function create(GameScene) {
         this.sword.setVisible(false);
     });
 
+
+
+
+
+
+    
+    this.skeleton = this.physics.add.sprite(170, 120, 'skeletonright1');
+    this.player.body.setSize(9, 16);
+    this.player.body.setOffset(3, 0);
+    this.physics.add.collider(this.skeleton, groundLayer);
+
     // Scanlines
     // const scanlines = this.add.graphics();
 

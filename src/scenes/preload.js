@@ -27,6 +27,12 @@ export function preload(GameScene) {
     this.load.image('Location-Dungeon', 'assets/Location-Dungeon.png')
     this.load.image('Heart', 'assets/Heart.png')
     
+    
+    this.load.image('skeletonright1', 'assets/skeletonright1.png')
+    this.load.image('skeletonright2', 'assets/skeletonright2.png')
+    this.load.image('skeletonleft1', 'assets/skeletonleft1.png')
+    this.load.image('skeletonleft2', 'assets/skeletonleft2.png')
+    
     // this.load.audio('footstep', 'assets/footstep1.wav');
     
     // this.load.image('rocktile', 'assets/rocktile1.png');
