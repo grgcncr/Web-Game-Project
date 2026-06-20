@@ -181,7 +181,23 @@ export default class GameScene extends Phaser.Scene {
         
         }
         
-    
+        if (this.skeleton.body.blocked.down){
+            // this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction);
+            if (this.skeleton.direction === -1) {
+                this.skeleton.anims.play('skeletonwalkleft', true)
+            }else{
+                this.skeleton.anims.play('skeletonwalkright', true)
+            }
+
+        }
+
+        if (
+            this.skeleton.body.blocked.left ||
+            this.skeleton.body.blocked.right
+        ) {
+            this.direction *= -1;
+        }
+        
     }
 
 }

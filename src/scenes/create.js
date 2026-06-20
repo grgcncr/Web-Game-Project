@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Skeleton from '../entities/skeleton';
 export function create(GameScene) {
     this.player = this.physics.add.sprite(150, 120, 'player');
     // this.player.setScale(1);
@@ -97,7 +98,7 @@ export function create(GameScene) {
         repeat: 0
     });
 
-    this.sword = this.physics.add.sprite(this.player.x, this.player.y, 'sword1');
+    this.sword = this.physics.add.sprite(this.player.x + 7, this.player.y + 20, 'sword1');
     this.sword.body.setSize(11, 10);
     this.sword.body.setOffset(3, 0);
     this.sword.setVisible(false);
@@ -177,14 +178,38 @@ export function create(GameScene) {
 
 
 
-
+    this.skeleton = this.physics.add.sprite(190, 120, 'skeletonright1');
+    this.skeleton.body.setSize(9, 16);
+    this.skeleton.body.setOffset(3, 0);
+    this.physics.add.collider(this.skeleton, groundLayer);
+    this.skeleton.speed = 20;
+    this.skeleton.direction = 1;
+    // this.skeleton.setCollideWorldBounds(true);    
+    this.anims.create({
+        key: 'skeletonwalkright',
+        frames: [
+            { key: 'skeletonright1' },
+            { key: 'skeletonright2' }
+        ],
+        frameRate: 3,
+        repeat: 0
+    });
+    this.anims.create({
+        key: 'skeletonwalkleft',
+        frames: [
+            { key: 'skeletonleft1' },
+            { key: 'skeletonleft2' }
+        ],
+        frameRate: 3,
+        repeat: 0
+    });
+    
+    // this.cameras.main.stopFollow();
+    
 
 
     
-    this.skeleton = this.physics.add.sprite(170, 120, 'skeletonright1');
-    this.player.body.setSize(9, 16);
-    this.player.body.setOffset(3, 0);
-    this.physics.add.collider(this.skeleton, groundLayer);
+
 
     // Scanlines
     // const scanlines = this.add.graphics();
