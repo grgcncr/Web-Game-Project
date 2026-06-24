@@ -4,7 +4,7 @@ export function create(GameScene) {
     this.physics.world.fixedStep = true;
     
     this.playerdamaged = false;
-    
+    this.invinsible = false;
     this.player = this.physics.add.sprite(150, 120, 'player');
     // this.player.setScale(1);
     this.cameras.main.startFollow(this.player);
@@ -212,6 +212,7 @@ export function create(GameScene) {
         frameRate: 4,
         repeat: -1
     });
+    
     this.physics.add.overlap(
         this.player,
         this.skeleton,

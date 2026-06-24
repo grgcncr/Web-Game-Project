@@ -17,29 +17,48 @@ export default class GameScene extends Phaser.Scene {
 
     playerHit(player, skeleton) {
 
-        console.log("player damaged");
+        // Ignore hits while invincible
+        if (this.invincible) {
+            return;
+        }
 
+        this.invincible = true;
         this.playerdamaged = true;
-        const lastdirection = this.lastDirection;
+
         if (skeleton.x < player.x) {
             player.setVelocityX(100);
-            this.lastDirection = lastdirection;
         } else {
             player.setVelocityX(-100);
-            this.lastDirection = lastdirection;
         }
 
         player.setVelocityY(-80);
 
-        this.time.delayedCall(200, () => {
+        // End knockback after 150ms
+        this.time.delayedCall(150, () => {
             this.playerdamaged = false;
         });
 
+        // End invincibility after 700ms
+        this.time.delayedCall(700, () => {
+            this.invincible = false;
+        });
     }
 
     update() {
         
         if (this.playerdamaged) {
+            this.time.addEvent({
+                delay: 100,
+                repeat: 6, // 7 flashes total = 700ms
+                callback: () => {
+                    this.player.visible = !this.player.visible;
+                }
+            });
+
+            this.time.delayedCall(700, () => {
+                this.player.visible = true;
+                this.invincible = false;
+            });
             return;
         }
         // ATTACK LOGIC
