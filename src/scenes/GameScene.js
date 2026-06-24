@@ -15,9 +15,33 @@ export default class GameScene extends Phaser.Scene {
         create.call(this);
     }
 
+    playerHit(player, skeleton) {
+
+        console.log("player damaged");
+
+        this.playerdamaged = true;
+        const lastdirection = this.lastDirection;
+        if (skeleton.x < player.x) {
+            player.setVelocityX(100);
+            this.lastDirection = lastdirection;
+        } else {
+            player.setVelocityX(-100);
+            this.lastDirection = lastdirection;
+        }
+
+        player.setVelocityY(-80);
+
+        this.time.delayedCall(200, () => {
+            this.playerdamaged = false;
+        });
+
+    }
 
     update() {
         
+        if (this.playerdamaged) {
+            return;
+        }
         // ATTACK LOGIC
         
         switch (this.sword.anims.currentFrame?.textureKey){
@@ -141,7 +165,9 @@ export default class GameScene extends Phaser.Scene {
             this.player.setVelocityX(this.playerxvelocity);
 
         }else {
-            this.player.setVelocityX(0);
+            if (!this.playerdamaged){
+                this.player.setVelocityX(0);
+            }
             // this.footstep.stop();
             // this.player.anims.stop();
         }
@@ -182,7 +208,9 @@ export default class GameScene extends Phaser.Scene {
         }
         
         if (this.skeleton.body.blocked.down){
-            // this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction);
+            this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction); 
+            // this.skeleton.x -= 0.1; 
+            // this.skeleton.anims.pause();
             if (this.skeleton.direction === -1) {
                 this.skeleton.anims.play('skeletonwalkleft', true)
             }else{
@@ -195,8 +223,22 @@ export default class GameScene extends Phaser.Scene {
             this.skeleton.body.blocked.left ||
             this.skeleton.body.blocked.right
         ) {
-            this.direction *= -1;
+            this.skeleton.direction *= -1;
         }
+        
+        
+        // this.player.x = Math.round(this.player.x);
+        // this.player.y = Math.round(this.player.y);
+
+        // this.skeleton.x = Math.round(this.skeleton.x);
+        // this.skeleton.y = Math.round(this.skeleton.y);
+        // if (Phaser.Input.Keyboard.JustDown(this.cursors.down)) {
+        //     if (this.skeleton.texture.key === 'skeletonright1') {
+        //         this.skeleton.setTexture('skeletonright2');
+        //     } else {
+        //         this.skeleton.setTexture('skeletonright1');
+        //     }
+        // }
         
     }
 

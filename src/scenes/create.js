@@ -1,16 +1,25 @@
 import Phaser from 'phaser';
 import Skeleton from '../entities/skeleton';
 export function create(GameScene) {
+    this.physics.world.fixedStep = true;
+    
+    this.playerdamaged = false;
+    
     this.player = this.physics.add.sprite(150, 120, 'player');
     // this.player.setScale(1);
     this.cameras.main.startFollow(this.player);
     // this.cameras.main.setLerp(1,1);
     this.cameras.main.setDeadzone(80, 100);
-    // this.cameras.roundPixels = true;
+    this.cameras.roundPixels = true;
     // UI CAMERA
     this.uiCamera = this.cameras.add(0, 0, 140, 100);
     this.uiCamera.setScroll(0, 0);
     this.uiCamera.roundPixels = true;
+    
+    // ENEMY CAMERA
+    this.enemyCamera = this.cameras.add(0, 0, 100, 100);
+    this.enemyCamera.ignore(this.player);
+    // this.cameras.main.ignore(this.skeleton);
     
     this.player.body.setSize(9, 16);
     this.player.body.setOffset(3, 0);
@@ -183,7 +192,7 @@ export function create(GameScene) {
     this.skeleton.body.setOffset(3, 0);
     this.physics.add.collider(this.skeleton, groundLayer);
     this.skeleton.speed = 20;
-    this.skeleton.direction = 1;
+    this.skeleton.direction = -1;
     // this.skeleton.setCollideWorldBounds(true);    
     this.anims.create({
         key: 'skeletonwalkright',
@@ -191,8 +200,8 @@ export function create(GameScene) {
             { key: 'skeletonright1' },
             { key: 'skeletonright2' }
         ],
-        frameRate: 3,
-        repeat: 0
+        frameRate: 4,
+        repeat: -1
     });
     this.anims.create({
         key: 'skeletonwalkleft',
@@ -200,9 +209,19 @@ export function create(GameScene) {
             { key: 'skeletonleft1' },
             { key: 'skeletonleft2' }
         ],
-        frameRate: 3,
-        repeat: 0
+        frameRate: 4,
+        repeat: -1
     });
+    this.physics.add.overlap(
+        this.player,
+        this.skeleton,
+        this.playerHit,
+        null,
+        this
+    );
+
+    
+    // this.physics.world.createDebugGraphic();
     
     // this.cameras.main.stopFollow();
     

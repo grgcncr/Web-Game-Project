@@ -5,8 +5,7 @@ const config = {
     type: Phaser.WEBGL,
     width: 140,
     height: 100,
-    pixelArt: true,
-    roundPixels: true,
+    
     backgroundColor: '#081820',
     physics: {
         default: 'arcade',
@@ -16,10 +15,14 @@ const config = {
         }
     },
     scale: {
-            mode: Phaser.Scale.FIT,
-            autoCenter: Phaser.Scale.CENTER_BOTH
+        // zoom: 10,
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
         },
-    scene: [GameScene]
+    pixelArt: true,
+    antialias: false,   
+    // roundPixels: true,
+    scene: [GameScene]  
 };
 
 new Phaser.Game(config);
