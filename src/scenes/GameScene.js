@@ -26,9 +26,9 @@ export default class GameScene extends Phaser.Scene {
         this.playerdamaged = true;
 
         if (skeleton.x < player.x) {
-            player.setVelocityX(100);
+            player.setVelocityX(70);
         } else {
-            player.setVelocityX(-100);
+            player.setVelocityX(-70);
         }
 
         player.setVelocityY(-80);
@@ -42,6 +42,35 @@ export default class GameScene extends Phaser.Scene {
         this.time.delayedCall(700, () => {
             this.invincible = false;
         });
+    }
+
+    skeletonHit(player, skeleton) {
+        this.sword.body.enable = true;
+        // Ignore hits while invincible
+        // if (this.enemy_invincible) {
+        //     return;
+        // }
+
+        // this.invincible = true;
+
+        if (this.lastDirection === 'right' ) {
+            skeleton.setVelocityX(70);
+        } else {
+            skeleton.setVelocityX(-70);
+        }
+
+        skeleton.setVelocityY(-80);
+
+        // // End knockback after 150ms
+        // this.time.delayedCall(150, () => {
+        //     this.playerdamaged = false;
+        // });
+
+        // // End invincibility after 700ms
+        // this.time.delayedCall(700, () => {
+        //     this.invincible = false;
+        // });
+        this.sword.body.enable = false;
     }
 
     update() {

@@ -108,8 +108,8 @@ export function create(GameScene) {
     });
 
     this.sword = this.physics.add.sprite(this.player.x + 7, this.player.y + 20, 'sword1');
-    this.sword.body.setSize(11, 10);
-    this.sword.body.setOffset(3, 0);
+    this.sword.body.setSize(13, 10);
+    this.sword.body.setOffset(1, 0);
     this.sword.setVisible(false);
     this.sword.body.moves = false;
     // this.swordHitbox = this.physics.add.sprite(10, 100, null);
@@ -186,6 +186,7 @@ export function create(GameScene) {
     });
 
 
+    this.enemies = this.physics.add.group();
 
     this.skeleton = this.physics.add.sprite(190, 120, 'skeletonright1');
     this.skeleton.body.setSize(9, 16);
@@ -193,6 +194,8 @@ export function create(GameScene) {
     this.physics.add.collider(this.skeleton, groundLayer);
     this.skeleton.speed = 20;
     this.skeleton.direction = -1;
+    this.enemies.add(this.skeleton);
+
     // this.skeleton.setCollideWorldBounds(true);    
     this.anims.create({
         key: 'skeletonwalkright',
@@ -215,8 +218,16 @@ export function create(GameScene) {
     
     this.physics.add.overlap(
         this.player,
-        this.skeleton,
+        this.enemies,
         this.playerHit,
+        null,
+        this
+    );
+
+    this.physics.add.overlap(
+        this.sword,
+        this.enemies,
+        this.skeletonHit,
         null,
         this
     );
