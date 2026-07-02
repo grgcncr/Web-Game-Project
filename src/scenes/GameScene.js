@@ -267,12 +267,13 @@ export default class GameScene extends Phaser.Scene {
 
         }
 
-        if (
-            this.skeleton.body.blocked.left ||
-            this.skeleton.body.blocked.right
-        ) {
+        const blockedX = this.skeleton.body.blocked.left || this.skeleton.body.blocked.right;
+
+        if (blockedX && !this.skeleton.wasBlockedX) {
             this.skeleton.direction *= -1;
         }
+
+        this.skeleton.wasBlockedX = blockedX;
         
         
         // this.player.x = Math.round(this.player.x);

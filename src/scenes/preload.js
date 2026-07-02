@@ -27,6 +27,7 @@ export function preload(GameScene) {
     this.load.image('Location-Dungeon', 'assets/Location-Dungeon.png')
     this.load.image('Heart', 'assets/Heart.png')
     
+    this.load.image('platform', 'assets/rocktileset3/tilesets/rocktile3.png')
 
 
     

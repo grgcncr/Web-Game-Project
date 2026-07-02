@@ -116,6 +116,7 @@ export function create(GameScene) {
     // console.log(this.swordHitbox);
     // this.swordHitbox.body.setSize(16, 16);
     this.sword.body.setAllowGravity(false);
+    this.sword.body.enable = false;
     // this.swordHitbox.setVisible(false);
     
     
@@ -130,7 +131,13 @@ export function create(GameScene) {
     const groundLayer = ground.createLayer('Layer 1',tileset,0,137);
     groundLayer.setCollisionByExclusion([-1]);
     this.physics.add.collider(this.player, groundLayer);
-    
+    let platforms;
+    platforms = this.physics.add.staticGroup();
+    platforms.create(100, 127, 'platform');
+    this.physics.add.collider(this.player, platforms);
+
+
+
     this.ui_Bar = this.add.image(70, 87, 'UI-Bar');
 
     this.ui_Bar.setScrollFactor(0);
@@ -195,6 +202,9 @@ export function create(GameScene) {
     this.skeleton.speed = 20;
     this.skeleton.direction = -1;
     this.enemies.add(this.skeleton);
+    this.physics.add.collider(this.skeleton, platforms);
+    this.skeleton.wasBlockedX = false;
+
 
     // this.skeleton.setCollideWorldBounds(true);    
     this.anims.create({
