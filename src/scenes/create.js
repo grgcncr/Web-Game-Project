@@ -24,6 +24,14 @@ export function create(GameScene) {
     this.player.body.setSize(9, 16);
     this.player.body.setOffset(3, 0);
     this.playerxvelocity = 50;
+    this.playeryvelocity = 160
+
+    this.headSensor = this.physics.add.image(0, 0, null);
+    this.headSensor.body.setSize(10, 4);
+    this.headSensor.setVisible(false);
+    this.headSensor.body.setAllowGravity(false);
+
+
     this.anims.create({
         key: 'walkright',
         frames: [
@@ -45,25 +53,25 @@ export function create(GameScene) {
     this.anims.create({
         key: 'jumpright',
         frames: [
-            { key: 'jumpright1' },
+            // { key: 'jumpright1' },
             { key: 'jumpright2' },
             { key: 'jumpright3' },
             { key: 'jumpright4' },
-            { key: 'jumpright1' }
+            { key: 'walkright2' }
         ],
-        frameRate: 8,
+        frameRate: 7,
         repeat: 0
     }); 
     this.anims.create({
         key: 'jumpleft',
         frames: [
-            { key: 'jumpleft1' },
+            // { key: 'jumpleft1' },
             { key: 'jumpleft2' },
             { key: 'jumpleft3' },
             { key: 'jumpleft4' },
-            { key: 'jumpleft1' }
+            { key: 'walkleft2' }
         ],
-        frameRate: 8,
+        frameRate: 7,
         repeat: 0
     }); 
     this.anims.create({
@@ -112,13 +120,13 @@ export function create(GameScene) {
     this.sword.body.setOffset(1, 0);
     this.sword.setVisible(false);
     this.sword.body.moves = false;
+    this.sword.setDepth(101);
     // this.swordHitbox = this.physics.add.sprite(10, 100, null);
     // console.log(this.swordHitbox);
     // this.swordHitbox.body.setSize(16, 16);
     this.sword.body.setAllowGravity(false);
     this.sword.body.enable = false;
     // this.swordHitbox.setVisible(false);
-    
     
     
     const ground = this.make.tilemap({ key: 'ground' });
@@ -131,11 +139,25 @@ export function create(GameScene) {
     const groundLayer = ground.createLayer('Layer 1',tileset,0,137);
     groundLayer.setCollisionByExclusion([-1]);
     this.physics.add.collider(this.player, groundLayer);
-    let platforms;
-    platforms = this.physics.add.staticGroup();
-    platforms.create(100, 127, 'platform');
-    this.physics.add.collider(this.player, platforms);
+    this.platforms = this.physics.add.staticGroup();
+    // platforms.create(100, 127, 'platform').setScale(4, 1).refreshBody();;
+    this.physics.add.collider(this.player, this.platforms);
 
+    this.blockedAbove = false
+    this.physics.add.collider(
+        this.headSensor,
+        this.platforms,
+        () => {
+            console.log("Head sensor hit a platform!");
+            this,this.blockedAbove = true;
+        }
+    );
+
+    const platform1 = this.add.tileSprite(100, 118, 64, 6, 'platform'); 
+    // x, y, width, height, texture — width here is 4x the original tile width
+
+    this.physics.add.existing(platform1, true); // true = static body
+    this.platforms.add(platform1); // add it to your static group so existing colliders cover it
 
 
     this.ui_Bar = this.add.image(70, 87, 'UI-Bar');
@@ -159,14 +181,6 @@ export function create(GameScene) {
     this.heart3 = this.add.image(34, 92, 'Heart');
     this.heart3.setScrollFactor(0);
     this.heart3.setDepth(101);
-
-    this.cameras.main.ignore([
-        this.ui_Bar,
-        this.location_dungeon,
-        this.heart1,
-        this.heart2,
-        this.heart3
-    ]);
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -202,7 +216,7 @@ export function create(GameScene) {
     this.skeleton.speed = 20;
     this.skeleton.direction = -1;
     this.enemies.add(this.skeleton);
-    this.physics.add.collider(this.skeleton, platforms);
+    this.physics.add.collider(this.skeleton, this.platforms);
     this.skeleton.wasBlockedX = false;
 
 
@@ -242,6 +256,28 @@ export function create(GameScene) {
         this
     );
 
+
+    this.cameras.main.ignore([
+        this.ui_Bar,
+        this.location_dungeon,
+        this.heart1,
+        this.heart2,
+        this.heart3
+    ]);
+
+    this.uiCamera.ignore([
+    this.player,
+    this.sword,
+    this.skeleton,
+    groundLayer,
+    this.platforms.getChildren()
+    ].flat());
+
+    this.enemyCamera.ignore([
+        this.sword,
+        groundLayer,
+        this.platforms.getChildren()
+    ].flat());
     
     // this.physics.world.createDebugGraphic();
     
@@ -291,4 +327,14 @@ export function create(GameScene) {
 
     // vignette.setScrollFactor(0);
     // vignette.setDepth(9999);
+
+    function switchJumpDirection(player, newAnimKey) {
+        const currentFrameIndex = player.anims.currentFrame?.index ?? 1;
+        player.anims.play(newAnimKey);
+        // Frames are 1-indexed in currentFrame.index, but 0-indexed in the frames array
+        const targetFrame = player.anims.currentAnim.frames[currentFrameIndex - 1];
+        if (targetFrame) {
+            player.anims.setCurrentFrame(targetFrame);
+        }
+    }
 }

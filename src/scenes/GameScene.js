@@ -74,7 +74,10 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
-        
+        this.headSensor.setPosition(
+            this.player.x,
+            this.player.y -10
+        );
         if (this.playerdamaged) {
             this.time.addEvent({
                 delay: 100,
@@ -209,8 +212,10 @@ export default class GameScene extends Phaser.Scene {
         
         }else if (this.cursors.left.isDown) {
             this.player.setVelocityX(-this.playerxvelocity);
+            this.lastDirection = 'left';
         }else if (this.cursors.right.isDown) {
             this.player.setVelocityX(this.playerxvelocity);
+            this.lastDirection = 'right';
 
         }else {
             if (!this.playerdamaged){
@@ -242,19 +247,36 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
         }  
-
-        // JUMP LOGIC
         
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down) {
-            this.player.setVelocityY(-150);
+        // JUMP LOGIC
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.player.body.blocked.down && !this.blockedAbove) {
+            this.player.setVelocityY(-this.playeryvelocity);
             if (this.lastDirection === 'right'){
                 this.player.anims.play('jumpright');
             }else {
                 this.player.anims.play('jumpleft');
             }
         
+        } else {
+
+            // FALL LOGIC
+            if (!this.player.body.blocked.down && !this.isAttacking && !this.playerdamaged) {
+                if (this.lastDirection === 'right') {
+                    if (this.player.anims.currentAnim?.key !== 'jumpright') {
+                        this.player.anims.timeScale = 2;
+                        this.player.anims.play('jumpright');
+                        this.player.anims.timeScale = 1;
+                    }
+                } else {
+                    if (this.player.anims.currentAnim?.key !== 'jumpleft') {
+                        this.player.anims.timeScale = 2;
+                        this.player.anims.play('jumpleft');
+                        this.player.anims.timeScale = 1;
+                    }
+                }
+            }
         }
-        
+
         if (this.skeleton.body.blocked.down){
             this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction); 
             // this.skeleton.x -= 0.1; 
@@ -289,6 +311,7 @@ export default class GameScene extends Phaser.Scene {
         //     }
         // }
         
+    this.blockedAbove = false
     }
 
 }
