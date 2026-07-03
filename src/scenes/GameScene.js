@@ -18,29 +18,88 @@ export default class GameScene extends Phaser.Scene {
     playerHit(player, skeleton) {
 
         // Ignore hits while invincible
-        if (this.invincible) {
+        if (this.player.invincible) {
             return;
         }
+        this.player.hp -= 1;
+        this.player.invincible = true;
+        this.player.damaged = true;
+        
+        // Skakes hearts
+        this.tweens.add({
+            targets: [this.heart1, this.heart2, this.heart3],
+            x: '-=1',
+            duration: 40,
+            yoyo: true
+        });
+        
+        // Hearts png change
+        switch (this.player.hp){
+            case 5:
+                this.heart3.setTexture('Half-Heart');
+                break;
+            
+            case 4:
+                this.heart3.setTexture('Empty-Heart');
+                break;
 
-        this.invincible = true;
-        this.playerdamaged = true;
+            case 3:
+                this.heart3.setTexture('Empty-Heart');
+                this.heart2.setTexture('Half-Heart');
+                break;
 
+            case 2:
+                this.heart3.setTexture('Empty-Heart');
+                this.heart2.setTexture('Empty-Heart');
+                break;
+
+            case 1:
+                this.heart3.setTexture('Empty-Heart');
+                this.heart2.setTexture('Empty-Heart');
+                this.heart1.setTexture('Half-Heart');
+                break;
+            
+            case 0:
+                this.heart3.setTexture('Empty-Heart');
+                this.heart2.setTexture('Empty-Heart');
+                this.heart1.setTexture('Empty-Heart');
+                this
+                this.time.delayedCall(800, () => {
+                    this.scene.restart();
+                });
+                break;
+
+        }
+        
         if (skeleton.x < player.x) {
-            player.setVelocityX(70);
+            player.setVelocityX(80);
         } else {
-            player.setVelocityX(-70);
+            player.setVelocityX(-80);
         }
 
         player.setVelocityY(-80);
 
         // End knockback after 150ms
         this.time.delayedCall(150, () => {
-            this.playerdamaged = false;
+            this.player.damaged = false;
         });
 
         // End invincibility after 700ms
+        this.time.addEvent({
+            delay: 100,
+            repeat: 6,
+            callback: () => {
+                this.player.visible = !this.player.visible;
+            }
+        });
+
+        this.time.delayedCall(150, () => {
+            this.player.damaged = false;
+        });
+
         this.time.delayedCall(700, () => {
-            this.invincible = false;
+            this.player.visible = true;
+            this.player.invincible = false;
         });
     }
 
@@ -78,25 +137,23 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
+        
+        if (this.player.hp === 0){
+            this.player.setVelocityX(0);
+            this.player.setVelocityY(0);
+            this.player.anims.stop();
+            this.skeleton.setVelocityX(0);
+            this.skeleton.setVelocityY(0);
+            this.skeleton.anims.stop();
+            return;
+        }
+
         this.headSensor.setPosition(
             this.player.x,
             this.player.y -10
         );
-        if (this.playerdamaged) {
-            this.time.addEvent({
-                delay: 100,
-                repeat: 6, // 7 flashes total = 700ms
-                callback: () => {
-                    this.player.visible = !this.player.visible;
-                }
-            });
 
-            this.time.delayedCall(700, () => {
-                this.player.visible = true;
-                this.invincible = false;
-            });
-            return;
-        }
+        
         // ATTACK LOGIC
         
         switch (this.sword.anims.currentFrame?.textureKey){
@@ -222,7 +279,7 @@ export default class GameScene extends Phaser.Scene {
             this.lastDirection = 'right';
 
         }else {
-            if (!this.playerdamaged){
+            if (!this.player.damaged){
                 this.player.setVelocityX(0);
             }
             // this.footstep.stop();
@@ -240,12 +297,12 @@ export default class GameScene extends Phaser.Scene {
                     }
                 }
             }
-            else if (this.player.body.velocity.x > 0) {
+            else if (this.player.body.velocity.x > 0 && !this.player.damaged) {
                 if (this.player.anims.currentAnim?.key !== 'walkright') {
                     this.player.anims.play('walkright');
                 }
             }
-            else {
+            else if (this.player.body.velocity.x < 0 && !this.player.damaged) {
                 if (this.player.anims.currentAnim?.key !== 'walkleft') {
                     this.player.anims.play('walkleft');
                 }
@@ -264,7 +321,7 @@ export default class GameScene extends Phaser.Scene {
         } else {
 
             // FALL LOGIC
-            if (!this.player.body.blocked.down && !this.isAttacking && !this.playerdamaged) {
+            if (!this.player.body.blocked.down && !this.isAttacking && !this.player.invincible) {
                 if (this.lastDirection === 'right') {
                     if (this.player.anims.currentAnim?.key !== 'jumpright') {
                         this.player.anims.timeScale = 2;

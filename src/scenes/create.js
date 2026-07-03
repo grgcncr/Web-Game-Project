@@ -11,6 +11,9 @@ export function create(GameScene) {
     this.player.body.setOffset(5, 3);
     this.playerxvelocity = 50;
     this.playeryvelocity = 160
+    this.player.hp = 6;
+    this.player.invincible = false;
+    this.player.damaged = false;
     
     // this.player.setScale(1);
     this.cameras.main.startFollow(this.player);
