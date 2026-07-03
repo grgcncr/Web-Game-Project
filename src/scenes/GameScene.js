@@ -53,6 +53,7 @@ export default class GameScene extends Phaser.Scene {
 
         // this.invincible = true;
 
+        this.skeleton.hp -= 1;
         if (this.lastDirection === 'right' ) {
             skeleton.setVelocityX(70);
         } else {
@@ -60,7 +61,10 @@ export default class GameScene extends Phaser.Scene {
         }
 
         skeleton.setVelocityY(-80);
-
+        if (this.skeleton.hp === 0){
+            this.skeleton.destroy();
+            this.skeleton = null;
+        }
         // // End knockback after 150ms
         // this.time.delayedCall(150, () => {
         //     this.playerdamaged = false;
@@ -277,26 +281,27 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        if (this.skeleton.body.blocked.down){
-            this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction); 
-            // this.skeleton.x -= 0.1; 
-            // this.skeleton.anims.pause();
-            if (this.skeleton.direction === -1) {
-                this.skeleton.anims.play('skeletonwalkleft', true)
-            }else{
-                this.skeleton.anims.play('skeletonwalkright', true)
+        if (this.skeleton !== null){
+            if (this.skeleton.body.blocked.down){
+                this.skeleton.setVelocityX(this.skeleton.speed * this.skeleton.direction); 
+                // this.skeleton.x -= 0.1; 
+                // this.skeleton.anims.pause();
+                if (this.skeleton.direction === -1) {
+                    this.skeleton.anims.play('skeletonwalkleft', true)
+                }else{
+                    this.skeleton.anims.play('skeletonwalkright', true)
+                }
+
             }
 
+            const blockedX = this.skeleton.body.blocked.left || this.skeleton.body.blocked.right;
+
+            if (blockedX && !this.skeleton.wasBlockedX) {
+                this.skeleton.direction *= -1;
+            }
+
+            this.skeleton.wasBlockedX = blockedX;
         }
-
-        const blockedX = this.skeleton.body.blocked.left || this.skeleton.body.blocked.right;
-
-        if (blockedX && !this.skeleton.wasBlockedX) {
-            this.skeleton.direction *= -1;
-        }
-
-        this.skeleton.wasBlockedX = blockedX;
-        
         
         // this.player.x = Math.round(this.player.x);
         // this.player.y = Math.round(this.player.y);

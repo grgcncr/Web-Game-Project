@@ -3,14 +3,21 @@ import Skeleton from '../entities/skeleton';
 export function create(GameScene) {
     this.physics.world.fixedStep = true;
     
+    // Player
     this.playerdamaged = false;
     this.invinsible = false;
     this.player = this.physics.add.sprite(150, 120, 'player');
+    this.player.body.setSize(7, 13);
+    this.player.body.setOffset(5, 3);
+    this.playerxvelocity = 50;
+    this.playeryvelocity = 160
+    
     // this.player.setScale(1);
     this.cameras.main.startFollow(this.player);
     // this.cameras.main.setLerp(1,1);
     this.cameras.main.setDeadzone(80, 100);
     this.cameras.roundPixels = true;
+    
     // UI CAMERA
     this.uiCamera = this.cameras.add(0, 0, 140, 100);
     this.uiCamera.setScroll(0, 0);
@@ -20,14 +27,10 @@ export function create(GameScene) {
     this.enemyCamera = this.cameras.add(0, 0, 100, 100);
     this.enemyCamera.ignore(this.player);
     // this.cameras.main.ignore(this.skeleton);
-    
-    this.player.body.setSize(9, 16);
-    this.player.body.setOffset(3, 0);
-    this.playerxvelocity = 50;
-    this.playeryvelocity = 160
 
+    // Overhead Sensor 
     this.headSensor = this.physics.add.image(0, 0, null);
-    this.headSensor.body.setSize(10, 4);
+    this.headSensor.body.setSize(7, 4);
     this.headSensor.setVisible(false);
     this.headSensor.body.setAllowGravity(false);
 
@@ -218,6 +221,7 @@ export function create(GameScene) {
     this.enemies.add(this.skeleton);
     this.physics.add.collider(this.skeleton, this.platforms);
     this.skeleton.wasBlockedX = false;
+    this.skeleton.hp = 2;
 
 
     // this.skeleton.setCollideWorldBounds(true);    
