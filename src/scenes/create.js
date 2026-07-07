@@ -22,7 +22,7 @@ export function create(GameScene) {
     this.cameras.roundPixels = true;
     
     // UI CAMERA
-    this.uiCamera = this.cameras.add(0, 0, 140, 100);
+    this.uiCamera = this.cameras.add(0, 0, 160, 130);
     this.uiCamera.setScroll(0, 0);
     this.uiCamera.roundPixels = true;
     
@@ -33,7 +33,7 @@ export function create(GameScene) {
 
     // Overhead Sensor 
     this.headSensor = this.physics.add.image(0, 0, null);
-    this.headSensor.body.setSize(7, 4);
+    this.headSensor.body.setSize(7, 1);
     this.headSensor.setVisible(false);
     this.headSensor.body.setAllowGravity(false);
 
@@ -142,7 +142,7 @@ export function create(GameScene) {
         'terrain'
     );
     this.textures.get('terrain').setFilter(Phaser.Textures.NEAREST);
-    const groundLayer = ground.createLayer('Layer 1',tileset,0,137);
+    const groundLayer = ground.createLayer('Layer 1',tileset,0,152);
     groundLayer.setCollisionByExclusion([-1]);
     this.physics.add.collider(this.player, groundLayer);
     this.platforms = this.physics.add.staticGroup();
@@ -159,32 +159,32 @@ export function create(GameScene) {
         }
     );
 
-    const platform1 = this.add.tileSprite(100, 118, 64, 6, 'platform'); 
+    const platform1 = this.add.tileSprite(100, 133, 64, 6, 'platform'); 
     // x, y, width, height, texture — width here is 4x the original tile width
 
     this.physics.add.existing(platform1, true); // true = static body
     this.platforms.add(platform1); // add it to your static group so existing colliders cover it
 
 
-    this.ui_Bar = this.add.image(70, 87, 'UI-Bar');
+    this.ui_Bar = this.add.image(80, 117, 'UI-Bar');
 
     this.ui_Bar.setScrollFactor(0);
     this.ui_Bar.setDepth(100);
 
-    this.location_dungeon = this.add.image(117, 82, 'Location-Dungeon');
+    this.location_dungeon = this.add.image(137, 112, 'Location-Dungeon');
     
     this.location_dungeon.setScrollFactor(0);
     this.location_dungeon.setDepth(101);
 
-    this.heart1 = this.add.image(10, 92, 'Heart');
+    this.heart1 = this.add.image(10, 122, 'Heart');
     this.heart1.setScrollFactor(0);
     this.heart1.setDepth(101);
 
-    this.heart2 = this.add.image(22, 92, 'Heart');
+    this.heart2 = this.add.image(22, 122, 'Heart');
     this.heart2.setScrollFactor(0);
     this.heart2.setDepth(101);
 
-    this.heart3 = this.add.image(34, 92, 'Heart');
+    this.heart3 = this.add.image(34, 122, 'Heart');
     this.heart3.setScrollFactor(0);
     this.heart3.setDepth(101);
 

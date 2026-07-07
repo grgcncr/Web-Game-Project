@@ -3,8 +3,8 @@ import GameScene from './scenes/GameScene';
 
 const config = {
     type: Phaser.WEBGL,
-    width: 140,
-    height: 100,
+    width: 160,
+    height: 130,
     
     backgroundColor: '#081820',
     physics: {

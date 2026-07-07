@@ -150,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.headSensor.setPosition(
             this.player.x,
-            this.player.y -10
+            this.player.y -8
         );
 
         
