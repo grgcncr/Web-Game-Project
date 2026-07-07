@@ -137,7 +137,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
-        
+        this.cameras.main.scrollY = 55;
+
         if (this.player.hp === 0){
             this.player.setVelocityX(0);
             this.player.setVelocityY(0);

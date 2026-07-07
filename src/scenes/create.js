@@ -6,7 +6,7 @@ export function create(GameScene) {
     // Player
     this.playerdamaged = false;
     this.invinsible = false;
-    this.player = this.physics.add.sprite(150, 120, 'player');
+    this.player = this.physics.add.sprite(120, 152, 'player');
     this.player.body.setSize(7, 13);
     this.player.body.setOffset(5, 3);
     this.playerxvelocity = 50;
@@ -16,10 +16,16 @@ export function create(GameScene) {
     this.player.damaged = false;
     
     // this.player.setScale(1);
-    this.cameras.main.startFollow(this.player);
+    this.cameras.main.scrollY = 0;
+    // this.cameras.main.
+
+    this.cameras.main.startFollow(this.player, true, 1, 0);
+    console.log('scrollY:', this.cameras.main.scrollY);
+    
+    // this,cameras.main.
     // this.cameras.main.setLerp(1,1);
-    this.cameras.main.setDeadzone(80, 100);
-    this.cameras.roundPixels = true;
+    this.cameras.main.setDeadzone(50, 160);
+    // this.cameras.roundPixels = true;
     
     // UI CAMERA
     this.uiCamera = this.cameras.add(0, 0, 160, 130);
@@ -154,8 +160,8 @@ export function create(GameScene) {
         this.headSensor,
         this.platforms,
         () => {
-            console.log("Head sensor hit a platform!");
-            this,this.blockedAbove = true;
+            // console.log("Head sensor hit a platform!");
+            this.blockedAbove = true;
         }
     );
 
@@ -215,7 +221,7 @@ export function create(GameScene) {
 
     this.enemies = this.physics.add.group();
 
-    this.skeleton = this.physics.add.sprite(190, 120, 'skeletonright1');
+    this.skeleton = this.physics.add.sprite(190, 152, 'skeletonright1');
     this.skeleton.body.setSize(9, 16);
     this.skeleton.body.setOffset(3, 0);
     this.physics.add.collider(this.skeleton, groundLayer);
